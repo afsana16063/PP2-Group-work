@@ -26,6 +26,10 @@ public class MovieDatabase {
         }
     }
 
+    public List<Movie> getMovies() {
+        return movies;
+    }
+
     public Movie getMovieDetails(String title) {
         for (Movie movie : movies) {
             if (movie.getTitle().equalsIgnoreCase(title)) {
@@ -38,15 +42,8 @@ public class MovieDatabase {
 
 class Movie {
     private String title;
-    private String director;
-    private int releaseYear;
-    private int runningTime;
-
     public Movie(String title, String director, int releaseYear, int runningTime) {
         this.title = title;
-        this.director = director;
-        this.releaseYear = releaseYear;
-        this.runningTime = runningTime;
     }
 
     public String getTitle() {
