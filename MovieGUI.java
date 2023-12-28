@@ -82,13 +82,14 @@ public class MovieGUI extends JFrame {
         removeFromWatchlistButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                try{
                 String title = searchTextField.getText();
                 Movie movie = movieDatabase.getMovieDetails(title);
-                if (movie != null) {
-                    currentUser.removeFromWatchlist(movie);
-                    JOptionPane.showMessageDialog(MovieGUI.this, "Movie removed from watchlist: " + movie.getTitle());
-                } else {
-                    JOptionPane.showMessageDialog(MovieGUI.this, "Movie not found.");
+                movieDetailsTextArea.setText(movie.toString());
+                }catch (MovieNotFoundException ex) {
+                    movieDetailsTextArea.setText("Movie not found.");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         });

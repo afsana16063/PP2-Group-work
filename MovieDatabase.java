@@ -36,7 +36,13 @@ public class MovieDatabase {
                 return movie;
             }
         }
-        return null; // Movie not found
+        throw new MovieNotFoundException("Movie not found: " + title);
+    }
+}
+
+class MovieNotFoundException extends RuntimeException {
+    public MovieNotFoundException(String message) {
+        super(message);
     }
 }
 
