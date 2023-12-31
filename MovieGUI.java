@@ -15,7 +15,7 @@ public class MovieGUI extends JFrame {
 
     public MovieGUI(User user, MovieDatabase movieDatabase) {
         this.currentUser = user;
-        this.movieDatabase = movieDatabase;
+        MovieGUI.movieDatabase = movieDatabase;
 
         currentUser.loadWatchlist();
         initializeUI();
@@ -133,23 +133,25 @@ public class MovieGUI extends JFrame {
                 } catch(MovieNotFoundException ex) {
                     JOptionPane.showMessageDialog(MovieGUI.this, "Movie not found.");
                 }
+                updateMovieDetails();
             }
         });
 
         removeFromWatchlistButton.addActionListener(new ActionListener() {
-            @Override
+             @Override
             public void actionPerformed(ActionEvent e) {
-                try{
                 String title = searchTextField.getText();
-                Movie movie = movieDatabase.getMovieDetails(title);
-                movieDetailsTextArea.setText(movie.toString());
-                }catch (MovieNotFoundException ex) {
-                    movieDetailsTextArea.setText("Movie not found.");
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                try{
+                    Movie movie = movieDatabase.getMovieDetails(title);
+                    currentUser.removeFromWatchlist(movie);
+                    JOptionPane.showMessageDialog(MovieGUI.this, "Movie removed from watchlist: " + movie.getTitle());
+                } catch(MovieNotFoundException ex) {
+                    JOptionPane.showMessageDialog(MovieGUI.this, "Movie not found.");
                 }
+                updateMovieDetails();
             }
         });
+
 
         buttonPanel.add(addToWatchlistButton);
         buttonPanel.add(removeFromWatchlistButton);
