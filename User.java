@@ -48,6 +48,14 @@ public class User {
         }
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
     public void addToWatchlist(Movie movie) {
         watchlist.add(movie);
         saveWatchlist();
@@ -58,7 +66,7 @@ public class User {
         saveWatchlist();
     }
 
-    private void saveToDatabase() {
+    public void saveToDatabase() {
         try (BufferedReader reader = new BufferedReader(new FileReader("user_db.txt"))) {
             List<User> users = loadFromDatabase();
             users.add(this);
@@ -74,7 +82,7 @@ public class User {
         }
     }
 
-    private static List<User> loadFromDatabase() {
+    public static List<User> loadFromDatabase() {
         List<User> users = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader("user_db.txt"))) {

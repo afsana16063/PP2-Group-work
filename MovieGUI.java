@@ -18,7 +18,50 @@ public class MovieGUI extends JFrame {
         MovieGUI.movieDatabase = movieDatabase;
 
         currentUser.loadWatchlist();
-        initializeUI();
+        showLoginScreen();
+    }
+
+    private void showLoginScreen() {
+        JPanel loginPanel = new JPanel(new GridLayout(3, 2));
+
+        JTextField usernameField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
+
+        loginPanel.add(new JLabel("Username:"));
+        loginPanel.add(usernameField);
+        loginPanel.add(new JLabel("Password:"));
+        loginPanel.add(passwordField);
+
+        JButton loginButton = new JButton("Login");
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
+
+                if (User.login(username, password)) {
+
+                    currentUser = new User(username, password);
+                    currentUser.loadWatchlist();
+                    loginPanel.setVisible(false);
+                    initializeUI();
+
+                    getContentPane().removeAll();
+                    revalidate();
+                    repaint();
+                } else {
+                    JOptionPane.showMessageDialog(MovieGUI.this, "Invalid username or password. Try again.");
+                }
+            }
+        });
+
+        loginPanel.add(loginButton);
+
+        getContentPane().add(loginPanel);
+        pack();
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
     }
 
     private void initializeUI() {
