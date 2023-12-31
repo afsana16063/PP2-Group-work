@@ -30,12 +30,32 @@ public class User {
         return false;
     }
 
+    public void saveWatchlist() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(username + "_wl.ser"))) {
+            oos.writeObject(watchlist);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void loadWatchlist() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(username + "_wl.ser"))) {
+            watchlist = (List<Movie>) ois.readObject();
+            System.out.println("Watchlist content: " + watchlist);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void addToWatchlist(Movie movie) {
         watchlist.add(movie);
+        saveWatchlist();
     }
 
     public void removeFromWatchlist(Movie movie) {
         watchlist.remove(movie);
+        saveWatchlist();
     }
 
     private void saveToDatabase() {

@@ -2,9 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Comparator;
+import java.util.List;
+
 
 public class MovieGUI extends JFrame {
-    private MovieDatabase movieDatabase;
+    private static MovieDatabase movieDatabase;
     private User currentUser;
 
     private JTextArea movieDetailsTextArea;
@@ -14,6 +17,7 @@ public class MovieGUI extends JFrame {
         this.currentUser = user;
         this.movieDatabase = movieDatabase;
 
+        currentUser.loadWatchlist();
         initializeUI();
     }
 
@@ -33,6 +37,58 @@ public class MovieGUI extends JFrame {
 
         JPanel buttonPanel = createButtonPanel();
         add(buttonPanel, BorderLayout.SOUTH);
+
+        JPanel sortingPanel = createSortingPanel();
+        add(sortingPanel, BorderLayout.WEST);
+
+        updateMovieDetails();
+    }
+
+    private JPanel createSortingPanel() {
+        JPanel sortingPanel = new JPanel();
+        sortingPanel.setLayout(new BoxLayout(sortingPanel, BoxLayout.Y_AXIS));
+    
+        JButton sortByTitleButton = new JButton("Sort by Title");
+        JButton sortByReleaseYearButton = new JButton("Sort by Release Year");
+    
+        sortByTitleButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sortAndDisplayMovies(Comparator.comparing(Movie::getTitle));
+            }
+        });
+
+        sortByReleaseYearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sortAndDisplayMovies(Comparator.comparingInt(Movie::getReleaseYear));
+            }
+        });
+
+        sortingPanel.add(new JLabel("Sort Movies:"));
+        sortingPanel.add(sortByTitleButton);
+        sortingPanel.add(sortByReleaseYearButton);
+    
+        return sortingPanel;
+    }
+
+    private void sortAndDisplayMovies(Comparator<Movie> comparator) {
+        List<Movie> sortedMovies = movieDatabase.getMovies();
+        sortedMovies.sort(comparator);
+    
+        displayMovies(sortedMovies);
+    }
+
+    private void displayMovies(List<Movie> movies) {
+        StringBuilder sb = new StringBuilder();
+        for (Movie movie : movies) {
+            sb.append(movie.toString()).append("\n\n");
+        }
+        movieDetailsTextArea.setText(sb.toString());
+    }
+
+    private void updateMovieDetails() {
+        displayMovies(movieDatabase.getMovies());
     }
 
     private JPanel createSearchPanel() {
@@ -44,12 +100,13 @@ public class MovieGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String title = searchTextField.getText();
-                Movie movie = movieDatabase.getMovieDetails(title);
-                if (movie != null) {
+                try{
+                    Movie movie = movieDatabase.getMovieDetails(title);
                     movieDetailsTextArea.setText(movie.toString());
-                } else {
+                } catch (MovieNotFoundException ex) {
                     movieDetailsTextArea.setText("Movie not found.");
                 }
+                
             }
         });
 
@@ -69,11 +126,11 @@ public class MovieGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String title = searchTextField.getText();
-                Movie movie = movieDatabase.getMovieDetails(title);
-                if (movie != null) {
+                try{
+                    Movie movie = movieDatabase.getMovieDetails(title);
                     currentUser.addToWatchlist(movie);
                     JOptionPane.showMessageDialog(MovieGUI.this, "Movie added to watchlist: " + movie.getTitle());
-                } else {
+                } catch(MovieNotFoundException ex) {
                     JOptionPane.showMessageDialog(MovieGUI.this, "Movie not found.");
                 }
             }
@@ -98,6 +155,11 @@ public class MovieGUI extends JFrame {
         buttonPanel.add(removeFromWatchlistButton);
 
         return buttonPanel;
+    }
+
+        public void setDefaultCloseOperation(int operation) {
+        currentUser.saveWatchlist();
+        super.setDefaultCloseOperation(operation);
     }
 
     public static void main(String[] args) {

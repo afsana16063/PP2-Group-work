@@ -1,4 +1,8 @@
-public class Movie {
+import java.io.Serializable;
+
+import javax.swing.SwingUtilities;
+
+public class Movie implements Serializable {
     private String title;
     private String director;
     private int releaseYear;
@@ -12,7 +16,7 @@ public class Movie {
     }
 
     public String getTitle() {
-        return title;
+        return title.toLowerCase();
     }
 
     public void setTitle(String title) {
@@ -51,6 +55,18 @@ public class Movie {
                 ", releaseYear=" + releaseYear +
                 ", runningTime=" + runningTime +
                 '}';
+    }
+
+    public static void main(String[] args) {
+        MovieDatabase movieDatabase = new MovieDatabase();
+        User user= new User("User","password");
+        Movie fightclub = new Movie("FightClub", "Tyler Durden", 2004, 120);
+        movieDatabase.addMovie(fightclub);
+
+        MovieGUI movieGUI= new MovieGUI(user, movieDatabase);
+        SwingUtilities.invokeLater(()->{
+            movieGUI.setVisible(true);
+        });
     }
 }
 
