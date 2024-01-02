@@ -156,15 +156,19 @@ public class MovieGUI extends JFrame {
         removeFromWatchlistButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String title = searchTextField.getText();
+                int selectedIndex = watchlistJList.getSelectedIndex();
+                if (selectedIndex != -1) {
+                String title = watchlistJList.getModel().getElementAt(selectedIndex);
                 try {
-                    Movie movie = movieDatabase.getMovieDetails(title);
-                    currentUser.removeFromWatchlist(movie);
-                    JOptionPane.showMessageDialog(MovieGUI.this, "Movie removed from watchlist: " + movie.getTitle());
+                    currentUser.removeFromWatchlist(new Movie(title, "", 0, 0));  
+                    JOptionPane.showMessageDialog(MovieGUI.this, "Movie removed from watchlist: " + title);
+                    updateWatchlist();
                 } catch (MovieNotFoundException ex) {
-                    JOptionPane.showMessageDialog(MovieGUI.this, "Movie not found.");
+                    JOptionPane.showMessageDialog(MovieGUI.this, "Error: " + ex.getMessage());
                 }
-                updateWatchlist();
+            } else {
+                JOptionPane.showMessageDialog(MovieGUI.this, " Select a movie from the watchlist.");
+            }
             }
         });
 

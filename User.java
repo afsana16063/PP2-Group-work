@@ -65,9 +65,10 @@ public class User {
     }
 
     public void removeFromWatchlist(Movie movie) {
-        watchlist.remove(movie);
+        watchlist.removeIf(m -> m.getTitle().equalsIgnoreCase(movie.getTitle()));
         saveWatchlist();
     }
+    
 
     public void saveToDatabase() {
         try (BufferedReader reader = new BufferedReader(new FileReader("user_db.txt"))) {
