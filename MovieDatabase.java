@@ -12,7 +12,11 @@ public class MovieDatabase {
         this.movies = new HashMap<>();
     }
 
-
+    public static void main(String[] args) {
+        MovieDatabase movieDatabase = new MovieDatabase();
+        Movie fightclub = new Movie("FightClub", "Tyler Durden", 2004, 120);
+        movieDatabase.addMovie(fightclub);
+    }
 
     
     public List<Movie> getMoviesSortedByReleaseYear() {
@@ -67,42 +71,6 @@ public class MovieDatabase {
 class MovieNotFoundException extends RuntimeException {
     public MovieNotFoundException(String message) {
         super(message);
-    }
-}
-
-class Movie {
-    private String title;
-    private int releaseYear;
-    private String director;
-    private int runningTime;
-    public Movie(String title, String director, int releaseYear, int runningTime) {
-        this.title = title;
-        this.releaseYear = releaseYear;
-        this.director = director;
-        this.runningTime= runningTime;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public int getReleaseYear(){
-        return releaseYear;
-    }
-    
-    public String getDirector(){
-        return director;
-    }
-
-    public int getRunningTime() {
-    return runningTime;
-    }
-
-    
-    public static void main(String[] args) {
-        MovieDatabase movieDatabase = new MovieDatabase();
-        Movie fightclub = new Movie("FightClub", "Tyler Durden", 2004, 120);
-        movieDatabase.addMovie(fightclub);
     }
 }
 
