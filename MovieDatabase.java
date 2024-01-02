@@ -10,15 +10,33 @@ import java.util.Map;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
+/**
+ * The MovieDatabase class represents a database of movies.
+ * It includes methods to load movies from a file, perform various queries,
+ * and manage the collection of movies.
+ */
+
 public class MovieDatabase { 
     private String databaseFileName;
     private Map<String,Movie> movies;
+
+    /**
+     * Constructs a MovieDatabase with the specified database file name.
+     *
+     * @param databaseFileName The name of the file containing movie data.
+     */
 
     public MovieDatabase(String databaseFileName) {
         this.databaseFileName = databaseFileName;
         this.movies = new HashMap<>();
         loadMoviesFromDatabase();
     }
+
+    /**
+     * Main method for testing MovieDatabase functionality.
+     *
+     * @param args Command-line arguments (not used).
+     */
 
     public static void main(String[] args) {
         MovieDatabase movieDatabase = new MovieDatabase("movie_db.txt");
@@ -42,6 +60,11 @@ public class MovieDatabase {
         }
     }
 
+    /**
+     * Gets a list of movies sorted by release year.
+     *
+     * @return A list of movies sorted by release year.
+     */
     
     public List<Movie> getMoviesSortedByReleaseYear() {
         return movies.values().stream()
@@ -49,17 +72,36 @@ public class MovieDatabase {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets a list of movies by a specified director.
+     *
+     * @param director The director's name.
+     * @return A list of movies directed by the specified director.
+     */
+
     public List<Movie> getMoviesByDirector(String director) {
         return movies.values().stream()
                 .filter(movie -> movie.getDirector().equalsIgnoreCase(director))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets the total watch time of all movies in the database.
+     *
+     * @return The total watch time in minutes.
+     */
+
     public int getTotalWatchTime() {
         return movies.values().stream()
                 .mapToInt(Movie::getRunningTime)
                 .sum();
     }
+
+    /**
+     * Adds a movie to the database.
+     *
+     * @param movie The movie to be added.
+     */
 
     public void addMovie(Movie movie) {
         if (!movies.containsKey(movie.getTitle())) {
@@ -70,6 +112,12 @@ public class MovieDatabase {
         }
     }
 
+    /**
+     * Removes a movie from the database.
+     *
+     * @param movie The movie to be removed.
+     */
+
     public void removeMovie(Movie movie) {
         if (movies.containsKey(movie.getTitle())) {
             movies.remove(movie.getTitle());
@@ -79,9 +127,23 @@ public class MovieDatabase {
         }
     }
 
+    /**
+     * Gets a list of all movies in the database.
+     *
+     * @return A list of all movies.
+     */
+
     public List<Movie> getMovies() {
         return new ArrayList<>(movies.values());
     }
+
+    /**
+     * Gets the details of a specific movie by title.
+     *
+     * @param title The title of the movie to retrieve.
+     * @return The details of the specified movie.
+     * @throws MovieNotFoundException If the movie is not found.
+     */
 
     public Movie getMovieDetails(String title) {
         for (Movie movie:movies.values()){
@@ -92,7 +154,17 @@ public class MovieDatabase {
     }
 }
 
+/**
+ * Custom exception class for signaling that a movie is not found.
+ */
+
 class MovieNotFoundException extends RuntimeException {
+    /**
+     * Constructs a MovieNotFoundException with the specified error message.
+     *
+     * @param message The error message.
+     */
+    
     public MovieNotFoundException(String message) {
         super(message);
     }

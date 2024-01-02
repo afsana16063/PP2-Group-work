@@ -6,6 +6,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The MovieGUI class represents the graphical user interface for the movie application.
+ * It provides a window where users can interact with the movie database, including
+ * options to search, add to the watchlist, remove from the watchlist, and more.
+ */
+
 
 public class MovieGUI extends JFrame {
     private static MovieDatabase movieDatabase;
@@ -16,11 +22,23 @@ public class MovieGUI extends JFrame {
 
     private JList<String> watchlistJList;
 
+    /**
+     * Constructs a MovieGUI with the specified user and movie database.
+     *
+     * @param user           The current user of the application.
+     * @param movieDatabase The movie database used by the application.
+     */
+
     public MovieGUI(User user, MovieDatabase movieDatabase) {
         this.currentUser = user;
         MovieGUI.movieDatabase = movieDatabase;
         showLoginOrRegisterScreen();
     }
+
+    /**
+     * Displays the initial login or register screen with buttons to choose
+     * between login and registration.
+     */
     
     private void showLoginOrRegisterScreen() {
         JPanel choicePanel = new JPanel(new GridLayout(1, 2));
@@ -240,6 +258,13 @@ public class MovieGUI extends JFrame {
 
         return buttonPanel;
     }
+
+    /**
+     * Creates the sorting panel, which includes buttons for sorting movies
+     * and calculating the total running time of all movies.
+     *
+     * @return The sorting panel with relevant buttons.
+     */
 
     private JPanel createSortingPanel() {
         JPanel sortingPanel = new JPanel();
