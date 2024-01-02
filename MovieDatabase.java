@@ -16,8 +16,8 @@ public class MovieDatabase {
 
     public MovieDatabase(String databaseFileName) {
         this.databaseFileName = databaseFileName;
-        loadMoviesFromDatabase();
         this.movies = new HashMap<>();
+        loadMoviesFromDatabase();
     }
 
     public static void main(String[] args) {

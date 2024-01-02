@@ -59,10 +59,8 @@ public class Movie implements Serializable {
     }
 
     public static void main(String[] args) {
-        String databaseFileName = "movie_db.txt";
-        MovieDatabase movieDatabase = new MovieDatabase(databaseFileName);
+        MovieDatabase movieDatabase = new MovieDatabase("movie_db.txt");
         User authUser = authUser("User", "password");
-
         if (authUser != null) {
             MovieGUI movieGUI = new MovieGUI(authUser, movieDatabase);
             SwingUtilities.invokeLater(() -> {

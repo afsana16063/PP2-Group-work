@@ -1,2 +1,3 @@
 FightClub,Tyler Durden,2004,120
 DeadPool,Isa jumwudov,2002,125
+Warrior,Yusif Yusifov,2004,150
