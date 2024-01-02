@@ -1,3 +1,6 @@
 FightClub,Tyler Durden,2004,120
 DeadPool,Isa jumwudov,2002,125
 Warrior,Yusif Yusifov,2004,150
+Whiplash, Terence Fletcher, 2014, 107
+The Godfather, Vito Corleone, 1972, 175
+Taxi Driver, Travis Bickle, 1976, 114
