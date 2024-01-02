@@ -310,7 +310,6 @@ public class MovieGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        MovieDatabase movieDatabase = new MovieDatabase();
         User user = new User("User", "password");
 
         MovieGUI MovieGUI = new MovieGUI(user, movieDatabase);

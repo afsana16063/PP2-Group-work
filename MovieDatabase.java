@@ -1,3 +1,8 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -5,17 +10,36 @@ import java.util.Map;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
-public class MovieDatabase {
+public class MovieDatabase { 
+    private String databaseFileName;
     private Map<String,Movie> movies;
 
-    public MovieDatabase() {
+    public MovieDatabase(String databaseFileName) {
+        this.databaseFileName = databaseFileName;
+        loadMoviesFromDatabase();
         this.movies = new HashMap<>();
     }
 
     public static void main(String[] args) {
-        MovieDatabase movieDatabase = new MovieDatabase();
-        Movie fightclub = new Movie("FightClub", "Tyler Durden", 2004, 120);
-        movieDatabase.addMovie(fightclub);
+        MovieDatabase movieDatabase = new MovieDatabase("movie_db.txt");
+    }
+
+    private void loadMoviesFromDatabase() {
+        try 
+        {
+            movies = Files.lines(Paths.get(databaseFileName))
+                    .map(line -> {
+                        String[] parts = line.split(",");
+                        String title = parts[0].trim();
+                        String director = parts[1].trim();
+                        int releaseYear = Integer.parseInt(parts[2].trim());
+                        int runningTime = Integer.parseInt(parts[3].trim());
+                        return new Movie(title, director, releaseYear, runningTime);
+                    })
+                    .collect(Collectors.toMap(movie -> movie.getTitle().toLowerCase(), movie -> movie));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     

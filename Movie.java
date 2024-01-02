@@ -59,7 +59,8 @@ public class Movie implements Serializable {
     }
 
     public static void main(String[] args) {
-        MovieDatabase movieDatabase = new MovieDatabase();
+        String databaseFileName = "movie_db.txt";
+        MovieDatabase movieDatabase = new MovieDatabase(databaseFileName);
         User authUser = authUser("User", "password");
 
         if (authUser != null) {
