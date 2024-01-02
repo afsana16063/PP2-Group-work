@@ -262,9 +262,25 @@ public class MovieGUI extends JFrame {
             }
         });
 
+        JButton calculateTotalTimeButton = new JButton("Calculate Total Running Time");
+    JTextArea resultTextArea = new JTextArea(1, 20);
+    resultTextArea.setEditable(false);
+
+    calculateTotalTimeButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int totalRunningTime = movieDatabase.getTotalWatchTime();
+            resultTextArea.setText("Total Running Time: " + totalRunningTime + " minutes");
+        }
+    });
+
         sortingPanel.add(new JLabel("Sort Movies:"));
         sortingPanel.add(sortByTitleButton);
         sortingPanel.add(sortByReleaseYearButton);
+
+        sortingPanel.add(new JLabel("Calculate Total Running Time:"));
+    sortingPanel.add(calculateTotalTimeButton);
+    sortingPanel.add(resultTextArea);
 
         return sortingPanel;
     }
