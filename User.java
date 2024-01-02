@@ -14,9 +14,10 @@ public class User {
         this.watchlist = new ArrayList<>();
     }
 
-    public static void register(String username, String password) {
+    public static User register(String username, String password) {
         User user = new User(username, password);
         user.saveToDatabase();
+        return user;  //change no 1
     }
 
     public static Optional<User> login(String username, String password) {

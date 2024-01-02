@@ -19,8 +19,71 @@ public class MovieGUI extends JFrame {
     public MovieGUI(User user, MovieDatabase movieDatabase) {
         this.currentUser = user;
         MovieGUI.movieDatabase = movieDatabase;
+        showLoginOrRegisterScreen();
+    }
+    
+    private void showLoginOrRegisterScreen() {
+        JPanel choicePanel = new JPanel(new GridLayout(1, 2));
 
-        showLoginScreen();
+        JButton loginButton = new JButton("Login");
+        JButton registerButton = new JButton("Register");
+
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                choicePanel.setVisible(false);
+                showLoginScreen();
+            }
+        });
+
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                choicePanel.setVisible(false);
+                showRegisterScreen();
+            }
+        });
+
+        choicePanel.add(loginButton);
+        choicePanel.add(registerButton);
+
+        getContentPane().add(choicePanel);
+        pack();
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+    private void showRegisterScreen() { //change 2
+        JPanel registerPanel = new JPanel(new GridLayout(3, 2));
+        JTextField usernameField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
+    
+        registerPanel.add(new JLabel("Username:"));
+        registerPanel.add(usernameField);
+        registerPanel.add(new JLabel("Password:"));
+        registerPanel.add(passwordField);
+    
+        JButton registerButton = new JButton("Register");
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
+                User user =  User.register(username, password);
+                user.saveWatchlist();
+                getContentPane().removeAll();
+                showLoginScreen();
+                revalidate();
+                repaint();
+            }
+        });
+        registerPanel.add(registerButton);
+    
+        getContentPane().add(registerPanel);
+        pack();
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
     }
 
     private void showLoginScreen() {
