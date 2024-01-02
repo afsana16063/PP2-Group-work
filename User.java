@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class User {
     private String username;
@@ -18,16 +19,16 @@ public class User {
         user.saveToDatabase();
     }
 
-    public static boolean login(String username, String password) {
+    public static Optional<User> login(String username, String password) {
         List<User> users = loadFromDatabase();
 
         for (User user : users) {
             if (user.username.equals(username) && user.password.equals(password)) {
-                return true;
+                return Optional.of(user);
             }
         }
 
-        return false;
+        return Optional.empty();
     }
 
     public void saveWatchlist() {
@@ -39,13 +40,15 @@ public class User {
     }
 
     @SuppressWarnings("unchecked")
-    public void loadWatchlist() {
+    public List<Movie> loadWatchlist() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(username + "_wl.ser"))) {
             watchlist = (List<Movie>) ois.readObject();
             System.out.println("Watchlist content: " + watchlist);
+            return watchlist;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+        return new ArrayList<>();
     }
 
     public String getPassword() {
@@ -98,5 +101,3 @@ public class User {
         return users;
     }
 }
-
-// Snowman
