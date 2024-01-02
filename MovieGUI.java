@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 
 public class MovieGUI extends JFrame {
@@ -13,11 +14,12 @@ public class MovieGUI extends JFrame {
     private JTextArea movieDetailsTextArea;
     private JTextField searchTextField;
 
+    private JList<String> watchlistJList;
+
     public MovieGUI(User user, MovieDatabase movieDatabase) {
         this.currentUser = user;
         MovieGUI.movieDatabase = movieDatabase;
 
-        currentUser.loadWatchlist();
         showLoginScreen();
     }
 
@@ -38,15 +40,11 @@ public class MovieGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
-
-                if (User.login(username, password)) {
-
-                    currentUser = new User(username, password);
-                    currentUser.loadWatchlist();
-                    loginPanel.setVisible(false);
-                    initializeUI();
-
+                Optional<User> user = User.login(username, password);
+                if (user.isPresent()) {
+                    currentUser = user.get();
                     getContentPane().removeAll();
+                    initializeUI();
                     revalidate();
                     repaint();
                 } else {
@@ -66,8 +64,7 @@ public class MovieGUI extends JFrame {
 
     private void initializeUI() {
         setTitle("Movie App");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
+        setSize(600, 400);
         setLayout(new BorderLayout());
 
         JPanel searchPanel = createSearchPanel();
@@ -84,54 +81,31 @@ public class MovieGUI extends JFrame {
         JPanel sortingPanel = createSortingPanel();
         add(sortingPanel, BorderLayout.WEST);
 
+        JPanel watchlistPanel = createWatchlistPanel();
+        add(watchlistPanel, BorderLayout.EAST);
+
         updateMovieDetails();
+        updateWatchlist();
     }
 
-    private JPanel createSortingPanel() {
-        JPanel sortingPanel = new JPanel();
-        sortingPanel.setLayout(new BoxLayout(sortingPanel, BoxLayout.Y_AXIS));
-    
-        JButton sortByTitleButton = new JButton("Sort by Title");
-        JButton sortByReleaseYearButton = new JButton("Sort by Release Year");
-    
-        sortByTitleButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sortAndDisplayMovies(Comparator.comparing(Movie::getTitle));
-            }
-        });
+    private JPanel createWatchlistPanel() {
+        JPanel watchlistPanel = new JPanel(new BorderLayout());
+        watchlistJList = new JList<>();
+        JScrollPane watchlistScrollPane = new JScrollPane(watchlistJList);
 
-        sortByReleaseYearButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sortAndDisplayMovies(Comparator.comparingInt(Movie::getReleaseYear));
-            }
-        });
+        watchlistPanel.add(new JLabel("Watchlist"), BorderLayout.NORTH);
+        watchlistPanel.add(watchlistScrollPane, BorderLayout.CENTER);
 
-        sortingPanel.add(new JLabel("Sort Movies:"));
-        sortingPanel.add(sortByTitleButton);
-        sortingPanel.add(sortByReleaseYearButton);
-    
-        return sortingPanel;
+        return watchlistPanel;
     }
 
-    private void sortAndDisplayMovies(Comparator<Movie> comparator) {
-        List<Movie> sortedMovies = movieDatabase.getMovies();
-        sortedMovies.sort(comparator);
-    
-        displayMovies(sortedMovies);
-    }
-
-    private void displayMovies(List<Movie> movies) {
-        StringBuilder sb = new StringBuilder();
-        for (Movie movie : movies) {
-            sb.append(movie.toString()).append("\n\n");
+    private void updateWatchlist() {
+        List<Movie> watchlist = currentUser.loadWatchlist();
+        DefaultListModel<String> watchlistModel = new DefaultListModel<>();
+        for (Movie movie : watchlist) {
+            watchlistModel.addElement(movie.getTitle());
         }
-        movieDetailsTextArea.setText(sb.toString());
-    }
-
-    private void updateMovieDetails() {
-        displayMovies(movieDatabase.getMovies());
+        watchlistJList.setModel(watchlistModel);
     }
 
     private JPanel createSearchPanel() {
@@ -143,13 +117,12 @@ public class MovieGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String title = searchTextField.getText();
-                try{
+                try {
                     Movie movie = movieDatabase.getMovieDetails(title);
                     movieDetailsTextArea.setText(movie.toString());
                 } catch (MovieNotFoundException ex) {
                     movieDetailsTextArea.setText("Movie not found.");
                 }
-                
             }
         });
 
@@ -169,32 +142,31 @@ public class MovieGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String title = searchTextField.getText();
-                try{
+                try {
                     Movie movie = movieDatabase.getMovieDetails(title);
                     currentUser.addToWatchlist(movie);
                     JOptionPane.showMessageDialog(MovieGUI.this, "Movie added to watchlist: " + movie.getTitle());
-                } catch(MovieNotFoundException ex) {
+                } catch (MovieNotFoundException ex) {
                     JOptionPane.showMessageDialog(MovieGUI.this, "Movie not found.");
                 }
-                updateMovieDetails();
+                updateWatchlist();
             }
         });
 
         removeFromWatchlistButton.addActionListener(new ActionListener() {
-             @Override
+            @Override
             public void actionPerformed(ActionEvent e) {
                 String title = searchTextField.getText();
-                try{
+                try {
                     Movie movie = movieDatabase.getMovieDetails(title);
                     currentUser.removeFromWatchlist(movie);
                     JOptionPane.showMessageDialog(MovieGUI.this, "Movie removed from watchlist: " + movie.getTitle());
-                } catch(MovieNotFoundException ex) {
+                } catch (MovieNotFoundException ex) {
                     JOptionPane.showMessageDialog(MovieGUI.this, "Movie not found.");
                 }
-                updateMovieDetails();
+                updateWatchlist();
             }
         });
-
 
         buttonPanel.add(addToWatchlistButton);
         buttonPanel.add(removeFromWatchlistButton);
@@ -202,7 +174,54 @@ public class MovieGUI extends JFrame {
         return buttonPanel;
     }
 
-        public void setDefaultCloseOperation(int operation) {
+    private JPanel createSortingPanel() {
+        JPanel sortingPanel = new JPanel();
+        sortingPanel.setLayout(new BoxLayout(sortingPanel, BoxLayout.Y_AXIS));
+
+        JButton sortByTitleButton = new JButton("Sort by Title");
+        JButton sortByReleaseYearButton = new JButton("Sort by Release Year");
+
+        sortByTitleButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sortAndDisplayMovies(Comparator.comparing(Movie::getTitle));
+            }
+        });
+
+        sortByReleaseYearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sortAndDisplayMovies(Comparator.comparingInt(Movie::getReleaseYear));
+            }
+        });
+
+        sortingPanel.add(new JLabel("Sort Movies:"));
+        sortingPanel.add(sortByTitleButton);
+        sortingPanel.add(sortByReleaseYearButton);
+
+        return sortingPanel;
+    }
+
+    private void sortAndDisplayMovies(Comparator<Movie> comparator) {
+        List<Movie> sortedMovies = movieDatabase.getMovies();
+        sortedMovies.sort(comparator);
+
+        displayMovies(sortedMovies);
+    }
+
+    private void displayMovies(List<Movie> movies) {
+        StringBuilder sb = new StringBuilder();
+        for (Movie movie : movies) {
+            sb.append(movie.toString()).append("\n\n");
+        }
+        movieDetailsTextArea.setText(sb.toString());
+    }
+
+    private void updateMovieDetails() {
+        displayMovies(movieDatabase.getMovies());
+    }
+
+    public void setDefaultCloseOperation(int operation) {
         currentUser.saveWatchlist();
         super.setDefaultCloseOperation(operation);
     }
