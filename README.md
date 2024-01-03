@@ -40,3 +40,4 @@ This Java project is a movie database management system that allows users to int
 6. Calculate the total running time of the movies in the collection.
 
 Link to the YouTube video:
+https://youtu.be/Kgnxm5qsHZo
